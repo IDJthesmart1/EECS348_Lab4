@@ -11,6 +11,7 @@
 int main() {
     { // scope to prevent memory leak from recursive calls to main()
     int score;
+    int scoreRemaining;
 
     printf("Enter 0 or 1 to STOP\nEnter the NFL score: ");
     scanf ("%d", &score);
@@ -22,10 +23,14 @@ int main() {
     printf("\nPossible combinations of scoring plays if a team’s score is %d:\n\n", score);
 
     for (int i = 0; i <= score / 8; i++) {
-        for (int j = 0; j <= score / 7; j++) {
-            for (int k = 0; k <= score / 6; k++) {
-                for (int l = 0; l <= score / 3; l++) {
-                    for (int m = 0; m <= score / 2; m++) {
+        scoreRemaining = score - (i * 8);
+        for (int j = 0; j <= scoreRemaining / 7; j++) {
+            scoreRemaining = score - (i * 8) - (j * 7);
+            for (int k = 0; k <= scoreRemaining / 6; k++) {
+                scoreRemaining = score - (i * 8) - (j * 7) - (k * 6);
+                for (int l = 0; l <= scoreRemaining / 3; l++) {
+                    scoreRemaining = score - (i * 8) - (j * 7) - (k * 6) - (l * 3);
+                    for (int m = 0; m <= scoreRemaining / 2; m++) {
                         if ((i * 8) + (j * 7) + (k * 6) + (l * 3) + (m * 2) == score) {
                             printf("%d TD + 2pt, %d TD + FG, %d TD, %d 3pt FG, %d Safety\n", i, j, k, l, m);
                         }
