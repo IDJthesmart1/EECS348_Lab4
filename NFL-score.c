@@ -11,7 +11,6 @@
 int main() {
     { // scope to prevent memory leak from recursive calls to main()
     int score;
-    int scoreRemaining;
 
     printf("Enter 0 or 1 to STOP\nEnter the NFL score: ");
     scanf ("%d", &score);
@@ -22,19 +21,29 @@ int main() {
 
     printf("\nPossible combinations of scoring plays if a team’s score is %d:\n\n", score);
 
-    for (int i = 0; i <= score / 8; i++) {
-        scoreRemaining = score - (i * 8);
-        for (int j = 0; j <= scoreRemaining / 7; j++) {
-            scoreRemaining = score - (i * 8) - (j * 7);
-            for (int k = 0; k <= scoreRemaining / 6; k++) {
-                scoreRemaining = score - (i * 8) - (j * 7) - (k * 6);
-                for (int l = 0; l <= scoreRemaining / 3; l++) {
-                    scoreRemaining = score - (i * 8) - (j * 7) - (k * 6) - (l * 3);
-                    for (int m = 0; m <= scoreRemaining / 2; m++) {
-                        if ((i * 8) + (j * 7) + (k * 6) + (l * 3) + (m * 2) == score) {
-                            printf("%d TD + 2pt, %d TD + FG, %d TD, %d 3pt FG, %d Safety\n", i, j, k, l, m);
-                        }
-                    }
+
+    // Try all possible combinations of scoring plays (8, 7, 6, 3, and 2 point values)
+    // Iterate through touchdowns with 2-point conversions (8 points each)
+    for (int td2pt = 0; td2pt * 8 <= score; td2pt++) {
+        int remainingAfter8pt = score - (td2pt * 8);
+        
+        // Iterate through touchdowns with field goals (7 points each)
+        for (int tdFg = 0; tdFg * 7 <= remainingAfter8pt; tdFg++) {
+            int remainingAfter7pt = remainingAfter8pt - (tdFg * 7);
+            
+            // Iterate through regular touchdowns (6 points each)
+            for (int touchdowns = 0; touchdowns * 6 <= remainingAfter7pt; touchdowns++) {
+                int remainingAfter6pt = remainingAfter7pt - (touchdowns * 6);
+                
+                // Optimization: Start field goals at either 0 or 1 (even or odd) so that there is always an even remainder for safeties
+                // Increment by 2 to skip impossible point combinations
+                int startFg = remainingAfter6pt % 2; // Start at 1 if the remaining points after touchdowns is odd, otherwise start at 0
+                for (int fieldGoals = startFg; fieldGoals * 3 <= remainingAfter6pt; fieldGoals += 2) {
+                    int remainingAfter3pt = remainingAfter6pt - (fieldGoals * 3);
+                    int safeties = remainingAfter3pt / 2;
+                    // No need to check if the total points equals the input score, because the loop conditions ensure that it will always be the case
+                    // i.e. There will be no unnecessary loops
+                    printf("%d TD + 2pt, %d TD + FG, %d TD, %d 3pt FG, %d Safety\n", td2pt, tdFg, touchdowns, fieldGoals, safeties);
                 }
             }
         }
