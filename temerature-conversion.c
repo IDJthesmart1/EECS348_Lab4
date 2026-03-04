@@ -32,20 +32,27 @@ float kelvin_to_fahrenheit (float kelvin) {
 }
 
 
-int isKelvin(char *scale) {
+// Helper functions to identify the temperature scale by checking the first character
+// (case-insensitive: accepts both uppercase and lowercase inputs)
+int is_kelvin(char *scale) {
     return (scale[0] == 'K' || scale[0] == 'k');
 }
-int isCelsius(char *scale) {
+int is_celsius(char *scale) {
     return (scale[0] == 'C' || scale[0] == 'c');
 }
-int isFahrenheit(char *scale) {
+int is_fahrenheit(char *scale) {
     return (scale[0] == 'F' || scale[0] == 'f');
+}
+int is_valid_scale(char *scale) {
+    return is_kelvin(scale) || is_celsius(scale) || is_fahrenheit(scale);
 }
 
 void categorize_temperature(float celsius) {
     if (celsius < -273.15) {
+        // Absolute zero check
         printf("Wait, that's colder than absolute zero! That's not possible!\n");
     } else if (celsius >= -273.15 && celsius < -89.2) {
+        // -89.2°C is the coldest temperature ever recorded on Earth (Antarctica, 1983)
         printf("Whoa, that's a world record cold!\n");
     } else if (celsius >= -89.2 && celsius < 0) {
         printf("Weather Advisory: Freezing\nTry to stay inside and make sure to bundle up!\n");
@@ -58,16 +65,19 @@ void categorize_temperature(float celsius) {
     } else if (celsius >= 35 && celsius < 56.7) {
         printf("Weather Advisory: Extreme Heat\nTry to stay inside and make sure to stay hydrated!\n");
     } else if (celsius >= 56.7 && celsius < 100) {
+        // 56.7°C is the hottest temperature ever recorded on Earth (Death Valley, 1913)
         printf("Whoa, that's a world record heat!\n");
     } else {
+        // Above boiling point of water at standard pressure (100°C)
         printf("Wait, it's boiling out there! I don't think that's possible!\n");
     }
 }
 
 int main() {
-    float InputTemperature;
-    char inputScale[15], outputScale[15];
-    float outputTemperature, celsiusTemperature;
+    float InputTemperature; // Variable to store the user input numerical temperature value
+    char inputScale[15], outputScale[15]; // Arrays to store user input word for scales
+    float outputTemperature;  // The result of the user requested temperature conversion
+    float celsiusTemperature; // The Celsius conversion used internally
 
     while(1) {
 
@@ -81,27 +91,27 @@ int main() {
         scanf("%14s", outputScale);
 
 
-        if ((inputScale[0] == '\0' || outputScale[0] == '\0')) {
+        if ((is_valid_scale(inputScale) == 0 || is_valid_scale(outputScale) == 0)) {
             printf("Invalid input. Please try again.\n");
             continue;
         }
 
-        if (isCelsius(inputScale) && isFahrenheit(outputScale)) {
+        if (is_celsius(inputScale) && is_fahrenheit(outputScale)) {
             outputTemperature = celsius_to_fahrenheit(InputTemperature);
             celsiusTemperature = InputTemperature;
-        } else if (isFahrenheit(inputScale) && isCelsius(outputScale)) {
+        } else if (is_fahrenheit(inputScale) && is_celsius(outputScale)) {
             outputTemperature = fahrenheit_to_celsius(InputTemperature);
             celsiusTemperature = outputTemperature;
-        } else if (isCelsius(inputScale) && isKelvin(outputScale)) {
+        } else if (is_celsius(inputScale) && is_kelvin(outputScale)) {
             outputTemperature = celsius_to_kelvin(InputTemperature);
             celsiusTemperature = InputTemperature;
-        } else if (isKelvin(inputScale) && isCelsius(outputScale)) {
+        } else if (is_kelvin(inputScale) && is_celsius(outputScale)) {
             outputTemperature = kelvin_to_celsius(InputTemperature);
             celsiusTemperature = outputTemperature;
-        } else if (isFahrenheit(inputScale) && isKelvin(outputScale)) {
+        } else if (is_fahrenheit(inputScale) && is_kelvin(outputScale)) {
             outputTemperature = fahrenheit_to_kelvin(InputTemperature);
             celsiusTemperature = kelvin_to_celsius(outputTemperature);
-        } else if (isKelvin(inputScale) && isFahrenheit(outputScale)) {
+        } else if (is_kelvin(inputScale) && is_fahrenheit(outputScale)) {
             outputTemperature = kelvin_to_fahrenheit(InputTemperature);
             celsiusTemperature = kelvin_to_celsius(InputTemperature);
         } else {
@@ -113,13 +123,16 @@ int main() {
         printf("The converted temperature is: %.2f°%c\n", outputTemperature, outputScale[0]);
         categorize_temperature(celsiusTemperature);
 
+        // Extreme temperature handling: Allow retry in case of typo
         if (celsiusTemperature < -273.15) {
+            // Below absolute zero - ask to retry; if 'Y' continue loop
             printf("Try again? (Y/N)\n");
             scanf("%14s", &inputScale);
             if (inputScale[0] == 'Y') {
                 continue;
             }
         } else if (celsiusTemperature >= -273.15 && celsiusTemperature < -89.2) {
+            // Record cold - ask for confirmation; if 'N' continue loop
             printf("Are you sure? (Y/N)\n");
             scanf("%14s", &inputScale);
             if (inputScale[0] == 'Y') {
@@ -129,6 +142,7 @@ int main() {
                 continue;
             }
         } else if (celsiusTemperature >= 56.7 && celsiusTemperature < 100) {
+            // Record heat - ask for confirmation; if 'N' continue loop
             printf("Are you sure? (Y/N)\n");
             scanf("%14s", &inputScale);
             if (inputScale[0] == 'Y') {
@@ -138,6 +152,7 @@ int main() {
                 continue;
             }
         } else if (celsiusTemperature > 100) {
+            // Above boiling point - ask to retry; if 'Y' continue loop
             printf("Try again? (Y/N)\n");
             scanf("%14s", &inputScale);
             if (inputScale[0] == 'Y') {
