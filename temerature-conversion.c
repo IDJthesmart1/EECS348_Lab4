@@ -127,14 +127,14 @@ int main() {
         if (celsiusTemperature < -273.15) {
             // Below absolute zero - ask to retry; if 'Y' continue loop
             printf("Try again? (Y/N)\n");
-            scanf("%14s", &inputScale);
+            scanf("%14s", inputScale);
             if (inputScale[0] == 'Y') {
                 continue;
             }
         } else if (celsiusTemperature >= -273.15 && celsiusTemperature < -89.2) {
             // Record cold - ask for confirmation; if 'N' continue loop
             printf("Are you sure? (Y/N)\n");
-            scanf("%14s", &inputScale);
+            scanf("%14s", inputScale);
             if (inputScale[0] == 'Y') {
                 printf("Well, I hope you have some heaters!\n");
             } else {
@@ -144,7 +144,7 @@ int main() {
         } else if (celsiusTemperature >= 56.7 && celsiusTemperature < 100) {
             // Record heat - ask for confirmation; if 'N' continue loop
             printf("Are you sure? (Y/N)\n");
-            scanf("%14s", &inputScale);
+            scanf("%14s", inputScale);
             if (inputScale[0] == 'Y') {
                 printf("Well, I hope you have some air conditioning!\n");
             } else {
@@ -154,7 +154,7 @@ int main() {
         } else if (celsiusTemperature > 100) {
             // Above boiling point - ask to retry; if 'Y' continue loop
             printf("Try again? (Y/N)\n");
-            scanf("%14s", &inputScale);
+            scanf("%14s", inputScale);
             if (inputScale[0] == 'Y') {
                 continue;
             }
